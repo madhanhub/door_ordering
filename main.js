@@ -8,12 +8,14 @@ const jsonwebtoken=require('jsonwebtoken')
 
 const admin=require('./Schema/Admin')
 const product=require('./Schema/Product')
+const user=require('./Schema/user_register')
 
 const AdminController=require('./controllers/AdminControllers')
 const ProductController=require('./controllers/ProductController')
 
 const authorization=require('./function/auth')
 const cors=require('./function/cors')
+const UserController = require('./controllers/UserController')
 
 app.use(express.json())
 app.use(morgan('dev'))
@@ -136,3 +138,15 @@ app.get('/product',async(req,res)=>{
     res.send({message:'product list',data:list})
     
 })
+app.post('/user/register',async(req,res)=>{
+    try{
+        const{user_name,user_address,user_mobile,user_mailId,user_password}=req.body
+        const user_register=await UserController.User_Register(
+            user_name,user_address,user_mobile,user_mailId,user_password
+        )
+        res.status(200).json({message:'new user register',data:user_register})
+    }catch(error){
+        res.status(500).json({message:'user invalid'})
+    }
+})
+
