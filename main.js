@@ -9,6 +9,7 @@ const jsonwebtoken=require('jsonwebtoken')
 const admin=require('./Schema/Admin')
 const product=require('./Schema/Product')
 const user=require('./Schema/user_register')
+const order=require('./Schema/Order')
 
 const AdminController=require('./controllers/AdminControllers')
 const ProductController=require('./controllers/ProductController')
@@ -62,7 +63,10 @@ app.post('/admin',async(req,res)=>{
 })
 app.post('/admin/login',async(req,res)=>{
     try{
+    
         const{a_mailId,a_password}=req.body
+        
+        
         const login=await AdminController.Admin_login(
             a_mailId,
             a_password
@@ -141,6 +145,10 @@ app.get('/product',async(req,res)=>{
 app.post('/user/register',async(req,res)=>{
     try{
         const{user_name,user_address,user_mobile,user_mailId,user_password}=req.body
+        const existing_user=await user.findOne({user_mailId})
+        if(existing_user){
+            return res.status(400).json({message:'user already exist'})
+        }
         const user_register=await UserController.User_Register(
             user_name,user_address,user_mobile,user_mailId,user_password
         )
@@ -149,4 +157,49 @@ app.post('/user/register',async(req,res)=>{
         res.status(500).json({message:'user invalid'})
     }
 })
-
+app.post('/user/login',async(req,res)=>{
+    try{
+        const{user_mailId,user_password}=req.body
+        const u_login=await UserController.User_login(
+            user_mailId,user_password
+        )
+        if(u_login){
+            {
+                let token=await jsonwebtoken.sign({id:u_login.id,user_name:u_login.user_name,user_mailId:u_login.user_mailId},process.env.SECRET)
+                res.setHeader('token',token)
+                res.setHeader('id',u_login.id)
+                res.setHeader('user_name',u_login.user_name)
+                res.setHeader('user_mailId',u_login.user_mailId)
+                
+                res.status(200).json({message:'user login',data:token})
+            }
+        }
+        
+    }catch(error){
+        res.status(500).json({message:'invalid user'})
+    }
+})
+app.get('/product/view',async(req,res)=>{
+    const door_id=req.params
+    const list=await UserController.product_list(door_id)
+    res.send({message:'product list',data:list})
+    
+})
+app.post('/product/view/one',async(req,res)=>{
+    const _id=req.body
+    const list=await UserController.product_list_one(_id)
+    res.send({message:'product list',data:list})
+    
+})
+app.post('/order',async(req,res)=>{
+    try{
+        const{u_id,p_id}=req.body
+        const new_order=new order({
+            u_id,p_id
+        }).save()
+        
+        res.status(200).json({message:'order placed',data:order_details})
+    }catch(error){
+        res.status(500).json({message:'order failed'})
+    }
+})

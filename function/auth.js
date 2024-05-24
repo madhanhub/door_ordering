@@ -14,8 +14,11 @@ const authorization = function (req,res,next){
          
        if (tokengen) {
            req.id=tokengen.id
-           req._name=tokengen.a_name
+           req.a_name=tokengen.a_name
            req.a_mailId=tokengen.a_mailId
+           req.user_mailId=tokengen.user_mailId
+           req.user_name=tokengen.user_name
+
            
            
         //    req.u_id=tokengen.u_id
