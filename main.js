@@ -13,10 +13,12 @@ const order=require('./Schema/Order')
 
 const AdminController=require('./controllers/AdminControllers')
 const ProductController=require('./controllers/ProductController')
+const UserController = require('./controllers/UserController')
+const OrderController = require('./controllers/OrderController')
 
 const authorization=require('./function/auth')
 const cors=require('./function/cors')
-const UserController = require('./controllers/UserController')
+
 
 app.use(express.json())
 app.use(morgan('dev'))
@@ -191,15 +193,27 @@ app.post('/product/view/one',async(req,res)=>{
     res.send({message:'product list',data:list})
     
 })
-app.post('/order',async(req,res)=>{
+app.post('/order',authorization,async(req,res)=>{
     try{
-        const{u_id,p_id}=req.body
-        const new_order=new order({
-            u_id,p_id
-        }).save()
+
+        const{p_id,door_id,quantity}=req.body
+        const u_id=req.id
+        const new_order=await OrderController.New_order(
+            u_id,p_id,door_id,quantity
+        )
         
-        res.status(200).json({message:'order placed',data:order_details})
+        res.status(200).json({message:'order placed',data:new_order})
     }catch(error){
         res.status(500).json({message:'order failed'})
+    }
+})
+app.post('/order/cancle',async(req,res)=>{
+    try{
+            const o_cancle=await OrderController.Order_cancle({
+                _id:req.body._id
+    })
+    res.status(200).json({message:'order cancle',data:o_cancle})
+    }catch(error){
+        res.status(500).json({message:'something wrong'})
     }
 })
