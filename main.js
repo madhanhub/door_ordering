@@ -10,6 +10,7 @@ const admin=require('./Schema/Admin')
 const product=require('./Schema/Product')
 const user=require('./Schema/user_register')
 const order=require('./Schema/Order')
+const my_order=require('./Schema/My_order')
 
 const AdminController=require('./controllers/AdminControllers')
 const ProductController=require('./controllers/ProductController')
@@ -213,6 +214,30 @@ app.post('/order/cancle',async(req,res)=>{
                 _id:req.body._id
     })
     res.status(200).json({message:'order cancle',data:o_cancle})
+    }catch(error){
+        res.status(500).json({message:'something wrong'})
+    }
+})
+app.post('/myorder',async(req,res)=>{
+    try{
+        const {order_id,door_details}=req.body
+        const myorder=await OrderController.My_order(
+           order_id,door_details
+        )
+        res.status(200).json({success:true,message:'MY orders',data:myorder})
+    }catch(error){
+        res.status(500).json({message:'something wrong'})
+    }
+})
+app.post('/myorder/details',async(req,res)=>{
+    try{
+       const products=await product.findOne({_id:req.body._id,'door_details.door_id':req.body.door_id},
+       {'door_details.$':1})
+       const my_order_details=products.door_details.door_id
+       await my_order.findOneAndUpdate({_id:req.body._id},
+        {$push:{door_details:{door_id:req.body.door_id}}},
+        {new:true})
+        res.status(200).json({message:'MY orders',data:my_order_details})
     }catch(error){
         res.status(500).json({message:'something wrong'})
     }

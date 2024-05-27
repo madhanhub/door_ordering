@@ -1,0 +1,30 @@
+const mongoose=require('mongoose')
+const my_order=new mongoose.Schema({
+    order_id:{
+        type:String
+    },
+    door_details:[{
+        door_id:{
+            type:String
+        },
+        door_type:{
+            type:String,
+        },
+        door_colour:{
+            type:String
+        },
+        door_design:{
+            type:String
+        },
+        door_height:{
+            type:Number
+        },
+        door_breadth:{
+            type:Number
+        },
+        door_price:{
+            type:Number
+        }
+    }]
+})
+module.exports=mongoose.model('My_order',my_order)
