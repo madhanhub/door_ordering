@@ -5,11 +5,11 @@ const admin=require('../Schema/Admin')
 const product=require('../Schema/Product')
 class OrderController{
     static async New_order(
-        u_id,p_id,door_id,quantity
+        u_id,p_id,door_id,quantity,door_price,total
     ){
         const new_order=await new order({
             u_id,
-            p_id,door_id,quantity
+            p_id,door_id,quantity,door_price,total
         }).save()
         return new_order
     }

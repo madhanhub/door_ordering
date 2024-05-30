@@ -197,10 +197,12 @@ app.post('/product/view/one',async(req,res)=>{
 app.post('/order',authorization,async(req,res)=>{
     try{
 
-        const{p_id,door_id,quantity}=req.body
+        const{p_id,door_id,quantity,door_price}=req.body
         const u_id=req.id
+        const total=door_price*quantity
+
         const new_order=await OrderController.New_order(
-            u_id,p_id,door_id,quantity
+            u_id,p_id,door_id,quantity,door_price,total
         )
         
         res.status(200).json({message:'order placed',data:new_order})

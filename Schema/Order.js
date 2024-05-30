@@ -13,6 +13,12 @@ const order=new mongoose.Schema({
         },
         quantity:{
             type:Number
+        },
+        door_price:{
+            type:Number
+        },
+       total:{
+            type:Number
         }
 })
 module.exports=mongoose.model('Order',order)
