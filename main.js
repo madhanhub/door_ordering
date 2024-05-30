@@ -233,11 +233,19 @@ app.post('/myorder/details',async(req,res)=>{
     try{
        const products=await product.findOne({_id:req.body._id,'door_details.door_id':req.body.door_id},
        {'door_details.$':1})
-       const my_order_details=products.door_details.door_id
+       const my_order_details=products.door_id
        await my_order.findOneAndUpdate({_id:req.body._id},
         {$push:{door_details:{door_id:req.body.door_id}}},
         {new:true})
         res.status(200).json({message:'MY orders',data:my_order_details})
+    }catch(error){
+        res.status(500).json({message:'something wrong'})
+    }
+})
+app.post('/order/view',async(req,res)=>{
+    try{
+        const admin_places=await OrderController.Order_view({})
+        res.status(200).json({message:'order view',data:admin_places})
     }catch(error){
         res.status(500).json({message:'something wrong'})
     }

@@ -38,5 +38,11 @@ class OrderController{
             }}})
             return my_order_details
     }
+    static async Order_view(
+        
+    ){
+        const order_view=await order.find({})
+        return order_view
+    }
 }
 module.exports=OrderController
