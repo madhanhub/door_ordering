@@ -98,7 +98,7 @@ app.post('/admin/delete',authorization,async(req,res)=>{
         res.status(500).json({message:'something wrong'})
     }
 })
-app.post('/products',async(req,res)=>{
+app.post('/products',authorization,async(req,res)=>{
     try{
         const {a_id}=req.body
         const product=await ProductController.Product(a_id)
@@ -118,7 +118,7 @@ app.post('/product/add',authorization,async(req,res)=>{
         res.status(500).json({message:'something wrong'})
     }
 })
-app.post('/product/delete',async(req,res)=>{
+app.post('/product/delete',authorization,async(req,res)=>{
     try{
         const {_id,door_id}=req.body
         const p_delete=await ProductController.Product_delete(
@@ -129,7 +129,7 @@ app.post('/product/delete',async(req,res)=>{
         res.status(500).json({message:'something wrong'})
     }
 })
-app.post('/product/update',async(req,res)=>{
+app.post('/product/update',authorization,async(req,res)=>{
     try{
         const{_id,door_id,door_price}=req.body
         const p_update=await ProductController.Product_update(
@@ -140,7 +140,7 @@ app.post('/product/update',async(req,res)=>{
         res.status(500).json({message:'Something wrong'})
     }
 })
-app.get('/product',async(req,res)=>{
+app.get('/product',authorization,async(req,res)=>{
     const list=await ProductController.product_list({})
     res.send({message:'product list',data:list})
     
@@ -182,7 +182,7 @@ app.post('/user/login',async(req,res)=>{
         res.status(500).json({message:'invalid user'})
     }
 })
-app.get('/product/view',async(req,res)=>{
+app.get('/product/view',authorization,async(req,res)=>{
     const door_id=req.params
     const list=await UserController.product_list(door_id)
     res.send({message:'product list',data:list})
@@ -210,7 +210,7 @@ app.post('/order',authorization,async(req,res)=>{
         res.status(500).json({message:'order failed'})
     }
 })
-app.post('/order/cancle',async(req,res)=>{
+app.post('/order/cancle',authorization,async(req,res)=>{
     try{
             const o_cancle=await OrderController.Order_cancle({
                 _id:req.body._id
@@ -220,7 +220,7 @@ app.post('/order/cancle',async(req,res)=>{
         res.status(500).json({message:'something wrong'})
     }
 })
-app.post('/myorder',async(req,res)=>{
+app.post('/myorder',authorization,async(req,res)=>{
     try{
         const {order_id,door_details}=req.body
         const myorder=await OrderController.My_order(
@@ -231,7 +231,7 @@ app.post('/myorder',async(req,res)=>{
         res.status(500).json({message:'something wrong'})
     }
 })
-app.post('/myorder/details',async(req,res)=>{
+app.post('/myorder/details',authorization,async(req,res)=>{
     try{
        const products=await product.findOne({_id:req.body._id,'door_details.door_id':req.body.door_id},
        {'door_details.$':1})
@@ -244,7 +244,7 @@ app.post('/myorder/details',async(req,res)=>{
         res.status(500).json({message:'something wrong'})
     }
 })
-app.post('/order/view',async(req,res)=>{
+app.post('/order/view',authorization,async(req,res)=>{
     try{
         const admin_places=await OrderController.Order_view({})
         res.status(200).json({message:'order view',data:admin_places})
