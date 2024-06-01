@@ -15,5 +15,9 @@ const user=new mongoose.Schema({
     user_password:{
         type:String
     },
+    user_status:{
+        type:String,
+        default:'logout'
+    }
 })
 module.exports=mongoose.model('user_register',user)

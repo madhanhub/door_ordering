@@ -53,11 +53,12 @@ app.get('/',(req,res)=>{
 
 app.post('/admin',async(req,res)=>{
     try{
-        const{a_name,a_mailId, a_password}=req.body
+        const{a_name,a_mailId, a_password,a_status}=req.body
         const new_admin=await AdminController.New_admin(
             a_name,
             a_mailId,
-            a_password
+            a_password,
+            a_status
         )
         res.status(200).json({message:'admin register',data:new_admin})
     }catch(error){
@@ -72,7 +73,8 @@ app.post('/admin/login',async(req,res)=>{
         
         const login=await AdminController.Admin_login(
             a_mailId,
-            a_password
+            a_password,
+            
         )
         if(login){
             {
@@ -87,6 +89,17 @@ app.post('/admin/login',async(req,res)=>{
         
     }catch(error){
         res.status(500).json({message:'invalid email/password'})
+    }
+})
+app.post('/admin/logout',authorization,async(req,res)=>{
+    try{
+        const {a_mailId}=req.body
+        const logout=await AdminController.admin_logout(
+            a_mailId
+        )
+        res.status(200).json({message:'admin logout',data:logout})
+    }catch(error){
+        res.status(500).json({message:'something wrong'})
     }
 })
 app.post('/admin/delete',authorization,async(req,res)=>{
@@ -131,9 +144,9 @@ app.post('/product/delete',authorization,async(req,res)=>{
 })
 app.post('/product/update',authorization,async(req,res)=>{
     try{
-        const{_id,door_id,door_price}=req.body
+        const{_id,door_id,door_price,door_type,door_colour,door_design,door_height,door_breadth}=req.body
         const p_update=await ProductController.Product_update(
-            _id,door_id,door_price
+            _id,door_id,door_price,door_type,door_colour,door_design,door_height,door_breadth
         )
             res.status(200).json({message:'product updated',data:p_update})
     }catch(error){
@@ -147,13 +160,13 @@ app.get('/product',authorization,async(req,res)=>{
 })
 app.post('/user/register',async(req,res)=>{
     try{
-        const{user_name,user_address,user_mobile,user_mailId,user_password}=req.body
+        const{user_name,user_address,user_mobile,user_mailId,user_password,user_status}=req.body
         const existing_user=await user.findOne({user_mailId})
         if(existing_user){
             return res.status(400).json({message:'user already exist'})
         }
         const user_register=await UserController.User_Register(
-            user_name,user_address,user_mobile,user_mailId,user_password
+            user_name,user_address,user_mobile,user_mailId,user_password,user_status
         )
         res.status(200).json({message:'new user register',data:user_register})
     }catch(error){
@@ -180,6 +193,17 @@ app.post('/user/login',async(req,res)=>{
         
     }catch(error){
         res.status(500).json({message:'invalid user'})
+    }
+})
+app.post('/user/logout',authorization,async(req,res)=>{
+    try{
+        const {user_mailId}=req.body
+        const logout=await UserController.user_logout(
+            user_mailId 
+        )
+        res.status(200).json({message:'user logout',data:logout})
+    }catch(error){
+        res.status(500).json({message:'something wrong'})
     }
 })
 app.get('/product/view',authorization,async(req,res)=>{
@@ -240,6 +264,16 @@ app.post('/myorder/details',authorization,async(req,res)=>{
         {$push:{door_details:{door_id:req.body.door_id}}},
         {new:true})
         res.status(200).json({message:'MY orders',data:my_order_details})
+    }catch(error){
+        res.status(500).json({message:'something wrong'})
+    }
+})
+
+app.post('/myorder/cancle',async(req,res)=>{
+    try{
+        const order_cancle=await my_order.findOneAndUpdate({_id:req.body._id},
+            {$pull:{door_details:{door_id:req.body.door_id}}})
+            res.status(200).json({message:'order cancle',data:order_cancle})
     }catch(error){
         res.status(500).json({message:'something wrong'})
     }

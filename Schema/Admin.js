@@ -9,7 +9,10 @@ const admin=new mongoose.Schema({
         a_password:{
             type:String
         },
-       
+        a_status:{
+            type:String,
+            default:'logout'
+        }
 
 })
 module.exports=mongoose.model('Admin',admin)

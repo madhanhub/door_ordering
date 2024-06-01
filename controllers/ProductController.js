@@ -25,10 +25,16 @@ class ProductController{
          return p_delete
    }
    static async Product_update(
-      _id,door_id,door_price
+      _id,door_id,door_price,door_type,door_colour,door_design,door_height,door_breadth
    ){
       const P_update=await product.findOneAndUpdate({_id,'door_details.door_id':door_id},
-      {$set:{'door_details.$.door_price':door_price}})
+      {$set:{
+      'door_details.$.door_price':door_price,
+      'door_details.$.door_type':door_type,
+      'door_details.$.door_colour':door_colour,
+      'door_details.$.door_design':door_design,
+      'door_details.$.door_height':door_height,
+      'door_details.$.door_breadth':door_breadth}})
       return P_update
    }
    static async product_list(
